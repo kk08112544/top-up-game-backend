@@ -49,7 +49,16 @@ export class CartController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartService.remove(+id);
+  async deleteCart(@Param('id') id: number, @Res() res:Response):Promise<any>  {
+    try{
+      const deleteCart = await this.cartService.deleteCart(id);
+      if(deleteCart){
+        return res.status(200).json({message:'Delete Cart Id ' + id + ' is Successfully'});
+      }else{
+        return res.status(404).json({message:'This Cart Id ' + id + 'is not found'});
+      }
+    }catch(error){
+      return res.status(500).json({error:'Error message' + error});
+    }
   }
 }

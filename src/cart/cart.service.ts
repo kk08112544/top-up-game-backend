@@ -60,7 +60,11 @@ export class CartService {
     return `This action updates a #${id} cart`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} cart`;
+  async deleteCart(id: number):Promise<any> {
+    return this.prisma.cart.delete({
+      where:{
+        id:Number(id)
+      }
+    });
   }
 }

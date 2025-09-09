@@ -41,6 +41,7 @@ model Game {
   status_id Int @default(1)
   description String
   package Package[]
+  active Boolean @default(true)
 }
 
 model Status{
@@ -58,6 +59,7 @@ model Package {
   package_profile String
   game Game @relation(fields: [game_id],references: [id])
   game_id Int
+  active Boolean @default(true)
 }
 
 model Cart {

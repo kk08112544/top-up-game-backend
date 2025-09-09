@@ -21,7 +21,7 @@ export class CartController {
     try{
       const data = await this.cartService.create(postData);
       if(data === null){
-        return res.status(404).json({message:"Cannot TopUp this Package"});
+        return res.status(404).json({message:"Package and Game are not found"});
       }
       return res.status(201).json(data);
     }catch(error){
@@ -29,14 +29,18 @@ export class CartController {
     }
   }
 
-  @Get()
-  findAll() {
-    return this.cartService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.cartService.findOne(+id);
+  @Get(':user_id')
+  async findMyCart(@Param('user_id') user_id: number ,@Res() res:Response):Promise<any> {
+    try{
+      const myCart = await this.cartService.findMyCart(user_id);
+      if(myCart){
+        return res.status(200).json(myCart);
+      }else{
+        return res.status(404).json({message:'This User Id Cart ' + user_id + 'is not found.'});
+      }
+    }catch(error){
+      return res.status(500).json({error:'Error message' + error});
+    }
   }
 
   @Patch(':id')

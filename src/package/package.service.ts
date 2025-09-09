@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Package } from './package.model';
+import { Package } from '@prisma/client';
 import { PrismaService } from "src/prisma.service";
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import {Upload} from '@aws-sdk/lib-storage';
@@ -26,12 +26,23 @@ export class PackageService {
 
 
   async create(data: Package):Promise<any> {
-    const createPackage : Package = await this.prisma.package.create({
-      data:{
-        ...data,
+
+    const checkGame = await this.prisma.game.findUnique({
+      where:{
+        id:Number(data.game_id), active:true
       }
     })
-    return createPackage;
+
+    if(checkGame){
+         const createPackage : Package = await this.prisma.package.create({
+          data:{
+              ...data,
+          }
+         })
+         return createPackage;
+    }else{
+      return null
+    }
   }
 
 
@@ -39,7 +50,7 @@ export class PackageService {
 
   async findPackage(game_id: number):Promise<any> {
     return this.prisma.package.findMany({where:{
-      game_id:Number(game_id)
+      game_id:Number(game_id),active:true
     }})
   }
 
@@ -50,7 +61,7 @@ export class PackageService {
         game_id:Number(game_id),
         numpack:{
           not:0
-        }
+        },active:true
       }
     })
   }
@@ -80,7 +91,7 @@ export class PackageService {
 
   }
 
-  async updatePackage(id: number, data: Package):Promise<Package> {
+  async updatePackage(id: number, data: Package):Promise<any> {
      const {package_name,package_profile,price,numpack,game_id} = data;
 
      const updateData: Partial<Package>={}
@@ -91,6 +102,8 @@ export class PackageService {
      if(numpack) updateData.numpack = numpack;
      if(game_id) updateData.game_id = game_id;
 
+
+
      if(package_profile){
       try{
         await this.removeOldImage(id);
@@ -100,22 +113,47 @@ export class PackageService {
       }
      }
      try{
-      const updated = await this.prisma.package.update({
-        where:{id:Number(id)},
-        data:updateData
+       
+      const checkActive = await this.prisma.package.findUnique({
+        where:{id:Number(id), active:true}
       })
-      return updated;
+
+      if(checkActive){
+        if(game_id){
+          const checkGame = await this.prisma.game.findUnique({
+            where:{id:Number(game_id),
+              active:true
+            }
+          })
+          if(!checkGame){
+            return 'This Game ID is not found'
+          }
+        }
+        const updated = await this.prisma.package.update({
+          where:{id:Number(id)},
+          data:updateData
+        })
+        return updated;
+      }else{
+        return null
+      }
+      
      }catch(error:any){
       console.error('Failed to update equipment:',error.message);
       throw error;
      }
   }
 
-  async deletePackage(id: number) {
-     await this.removeOldImage(id)
-
-    return this.prisma.package.delete({
-       where: { id: Number(id) }
+  async deletePackage(id: number):Promise<any> {
+    
+    await this.removeOldImage(id);
+    return this.prisma.package.update({
+      where:{
+        id:Number(id)
+      },
+      data:{
+        active:false
+      }
     })
   }
 }

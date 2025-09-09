@@ -11,9 +11,10 @@ export class Game{
      @ApiProperty({ example: '' })
     game_profile:string;
 
-     @ApiProperty({ example: '' })
     status_id:number;
 
      @ApiProperty({ example: '' })
     description:string;
+
+     active:boolean=true
 }

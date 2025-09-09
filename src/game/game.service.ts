@@ -32,7 +32,11 @@ export class GameService {
   }
 
   async getAllGame():Promise<any> {
-    return this.prisma.game.findMany();
+    return this.prisma.game.findMany({
+      where:{
+        active:true
+      }
+    });
   }
 
   async getTopUpGame():Promise<any>{
@@ -41,6 +45,7 @@ export class GameService {
         status_id:{
           not:2
         },
+        active:true
       },
     })
   }
@@ -121,20 +126,15 @@ export class GameService {
   }
 
   async deleteGame(id: number):Promise<any> {
-    await this.removeOldImage(id)
 
-    const getpackage = await this.prisma.package.findMany({ where :{game_id:Number(id)}});
+    await this.removeOldImage(id);
 
-
-    if(getpackage !== null){
-        const deletepackage = await this.prisma.package.deleteMany({ where :{game_id:Number(id)}});
-    }
-
-
-
-    return this.prisma.package.delete({
+    return this.prisma.game.update({
       where:{
         id:Number(id)
+      },
+      data:{
+        active:false
       }
     })
   }

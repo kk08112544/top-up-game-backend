@@ -23,6 +23,9 @@ export class PackageController {
     }
     try{
       const data = await this.packageService.create(postData);
+      if(data === null){
+          return res.status(404).json({message:"This Game ID  " + data.game_id + "is not found"});
+      }
       return res.status(201).json(data);
     }catch(error){
       return res.status(500).json({error:'Error creating package', details:error.message})
@@ -68,8 +71,10 @@ export class PackageController {
       const updatedPackage = await this.packageService.updatePackage(id,postData);
       if(updatedPackage){
         return res.status(201).json(updatedPackage);
+      }else if(typeof updatedPackage === 'string'){
+        return res.status(404).json({error:'This Game ID  ' + postData.game_id + 'is not found.'});
       }else{
-        return res.status(404).json({error:'This Package ID ' + id + 'is not found.'});
+        return res.status(404).json({error:'This Package ID ' + id + '  is not found.'});
       }
     }catch(error){
       return res.status(500).json({ error: 'Error message' });
@@ -77,7 +82,7 @@ export class PackageController {
   }
 
   @Delete('deletePackage/:id')
-  async deletePackage(@Param('id') id: number , @Res() res:Response):Promise<any>  {
+  async deletePackage(@Param('id') id: number ,@Res() res:Response):Promise<any>  {
     try{
       const deleteGame = await this.packageService.deletePackage(id);
       if(deleteGame){

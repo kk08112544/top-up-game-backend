@@ -18,4 +18,7 @@ export class Package{
 
     @ApiProperty({ example: '' })
     game_id:number
+
+    
+    active:boolean=true
 }

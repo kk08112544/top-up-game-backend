@@ -14,7 +14,7 @@ export class CartService {
         where:{
           id:Number(data.game_id), status_id:{
             not:2
-          }
+          }, active:true
         },
       })
 
@@ -22,7 +22,7 @@ export class CartService {
         where:{
           id:Number(data.package_id), numpack:{
             not:0
-          }
+          }, active:true
         }
       })
 
@@ -48,12 +48,12 @@ export class CartService {
       }
   }
 
-  findAll() {
-    return `This action returns all cart`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} cart`;
+  async findMyCart(user_id: number):Promise<any> {
+      return this.prisma.cart.findMany({
+        where:{
+          user_id:Number(user_id)
+        }
+    });
   }
 
   update(id: number, updateCartDto: Cart) {

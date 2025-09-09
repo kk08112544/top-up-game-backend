@@ -12,23 +12,22 @@ export class CartService {
 
       const checkGame = await this.prisma.game.findUnique({
         where:{
-          id:Number(data.game_id)
+          id:Number(data.game_id), status_id:{
+            not:2
+          }
         },
       })
 
       const checkPackage = await this.prisma.package.findUnique({
         where:{
-          id:Number(data.package_id),
+          id:Number(data.package_id), numpack:{
+            not:0
+          }
         }
       })
 
-        // ถ้าไม่เจอเกมหรือแพ็คเกจ → return null เลย
-      if (!checkGame || !checkPackage) {
-        return 'Game and Package are not found.';
-      }
 
-
-      if(checkGame?.status_id !== 2 && checkPackage?.numpack!==0 ){
+      if(checkGame && checkPackage){
         const amountPackage = checkPackage.numpack - 1 ;
 
         const updatePackage = await this.prisma.package.update({
@@ -45,7 +44,7 @@ export class CartService {
         })
         return createCart;
       }else{
-        return null
+         return 'Game and Package are not found.';
       }
   }
 

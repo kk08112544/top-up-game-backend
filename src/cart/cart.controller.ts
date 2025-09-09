@@ -22,8 +22,6 @@ export class CartController {
       const data = await this.cartService.create(postData);
       if(data === null){
         return res.status(404).json({message:"Cannot TopUp this Package"});
-      }else if(typeof data==='string' ){
-        return res.status(404).json({message:"Game and Package are not found."});
       }
       return res.status(201).json(data);
     }catch(error){

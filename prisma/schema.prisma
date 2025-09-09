@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users{
+  id Int @id @default(autoincrement())
+  fname String
+  lname String
+  email String @unique
+  password String
+  user_profile String
+  role Role @relation(fields: [role_id],references: [id])
+  role_id Int  @default(2)
+  active Boolean @default(true)
+  cart Cart[]
+}
+
+model Role {
+  id Int @id @default(autoincrement())
+  role_name String
+  user Users[]
+}
+
+model Game {
+  id Int @id @default(autoincrement())
+  game_name String
+  game_profile String
+  status Status @relation(fields: [status_id],references: [id])
+  status_id Int @default(1)
+  description String
+  package Package[]
+}
+
+model Status{
+  id Int @id @default(autoincrement())
+  status_name String
+  game Game[]
+}
+
+
+model Package {
+  id Int @id @default(autoincrement())
+  package_name String
+  numpack Int
+  price Float
+  package_profile String
+  game Game @relation(fields: [game_id],references: [id])
+  game_id Int
+}
+
+model Cart {
+  id Int @id @default(autoincrement())
+  user Users @relation(fields: [user_id],references: [id])
+  user_id Int
+  UID String
+  game_id Int
+  package_id Int
+}
+
+
+

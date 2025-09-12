@@ -35,6 +35,17 @@ export class GameService {
     return this.prisma.game.findMany({
       where:{
         active:true
+      },
+      select:{
+        id:true,
+        game_name:true,
+        game_profile:true,
+        description:true,
+        status:{
+          select:{
+            status_name:true
+          }
+        }
       }
     });
   }
@@ -47,6 +58,17 @@ export class GameService {
         },
         active:true
       },
+        select:{
+        id:true,
+        game_name:true,
+        game_profile:true,
+        description:true,
+        status:{
+          select:{
+            status_name:true
+          }
+        }
+      }
     })
   }
 
@@ -55,6 +77,17 @@ export class GameService {
      return this.prisma.game.findUnique({
       where:{
         id:Number(id)
+      },
+        select:{
+        id:true,
+        game_name:true,
+        game_profile:true,
+        description:true,
+        status:{
+          select:{
+            status_name:true
+          }
+        }
       }
     });
   }

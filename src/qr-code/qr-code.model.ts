@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class Cart{
+export class QrCode{
 
     id:number;
 
@@ -8,11 +8,9 @@ export class Cart{
     user_id:number;
 
     @ApiProperty({ example: '' })
-    UID:string;
+    payment_id:number;
 
     @ApiProperty({ example: '' })
-    game_id:number;
+    price: number;  
 
-    @ApiProperty({ example: '' })
-    package_id:number;
 }

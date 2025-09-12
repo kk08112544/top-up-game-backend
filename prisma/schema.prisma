@@ -24,7 +24,7 @@ model Users{
   role Role @relation(fields: [role_id],references: [id])
   role_id Int  @default(2)
   active Boolean @default(true)
-  cart Cart[]
+  transaction Transaction[]
 }
 
 model Role {
@@ -42,12 +42,14 @@ model Game {
   description String
   package Package[]
   active Boolean @default(true)
+  transaction Transaction[]
 }
 
 model Status{
   id Int @id @default(autoincrement())
   status_name String
   game Game[]
+  transaction Transaction[]
 }
 
 
@@ -60,15 +62,35 @@ model Package {
   game Game @relation(fields: [game_id],references: [id])
   game_id Int
   active Boolean @default(true)
+  transaction Transaction[]
 }
 
-model Cart {
+
+model PaymentMethod{
+  id Int @id @default(autoincrement())
+  payment_name String
+  code String
+  codePayment String
+  bankName String?
+  payment_profile String
+  active Boolean @default(true)
+  transaction Transaction[]
+}
+
+model Transaction{
   id Int @id @default(autoincrement())
   user Users @relation(fields: [user_id],references: [id])
   user_id Int
-  UID String
+  game Game @relation(fields: [game_id],references: [id])
   game_id Int
+  package Package @relation(fields: [package_id],references: [id])
   package_id Int
+  price Float
+  UID String
+  paymentMethod PaymentMethod @relation(fields: [payment_id],references: [id])
+  payment_id Int
+  status Status @relation(fields: [status_id],references: [id])
+  status_id Int @default(3)
 }
 
 

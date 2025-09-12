@@ -7,3 +7,6 @@ npm install --save @nestjs/swagger swagger-ui-express
 
 
 npm run start:dev
+
+
+cypress testing framework

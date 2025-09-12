@@ -12,7 +12,7 @@ export class AwsController {
   constructor(private readonly awsService: AwsService) {}
 
   @Post('upload')
-   @ApiConsumes('multipart/form-data') // บอก Swagger ว่า endpoint รับไฟล์
+  @ApiConsumes('multipart/form-data') // บอก Swagger ว่า endpoint รับไฟล์
   @ApiBody({ type: AWS })
   @UseInterceptors(FileInterceptor('file', { storage: multer.memoryStorage() }))
   async create(@UploadedFile() file: Express.Multer.File, @Res() res:Response):Promise<any> {

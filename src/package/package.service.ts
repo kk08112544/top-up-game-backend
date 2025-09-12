@@ -51,7 +51,21 @@ export class PackageService {
   async findPackage(game_id: number):Promise<any> {
     return this.prisma.package.findMany({where:{
       game_id:Number(game_id),active:true
-    }})
+    },
+  select:{
+    id:true,
+    package_name:true,
+    numpack:true,
+    price:true,
+    package_profile:true,
+    game:{
+      select:{
+        game_name:true,
+        game_profile:true,
+      }
+    }
+  }}
+     )
   }
 
 
@@ -62,7 +76,20 @@ export class PackageService {
         numpack:{
           not:0
         },active:true
+      },
+      select:{
+    id:true,
+    package_name:true,
+    numpack:true,
+    price:true,
+    package_profile:true,
+    game:{
+      select:{
+        game_name:true,
+        game_profile:true,
       }
+    }
+  }
     })
   }
 

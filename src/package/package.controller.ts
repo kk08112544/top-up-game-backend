@@ -16,7 +16,7 @@ export class PackageController {
   @Post('createNewPackage')
   async create(@Body() postData: Package, @Res() res:Response):Promise<any> {
 
-     if(!postData.package_name || !postData.numpack || !postData.price || !postData.package_profile ||
+     if(!postData.package_name || !postData.numpack || !postData.price ||
       !postData.game_id
      ){
       return res.status(400).json({message: 'Content are not empty'});
@@ -64,7 +64,7 @@ export class PackageController {
 
   @Put('updatePackage/:id')
   async updatePackage(@Param('id') id: number, @Body() postData: Package, @Res() res:Response):Promise<any> {
-    if(!postData.package_name && !postData.numpack && !postData.price && !postData.package_profile && !postData.game_id){
+    if(!postData.package_name && !postData.numpack && !postData.price &&  !postData.game_id){
       return res.status(400).json({message: 'Content are not empty'});
     }
      try{

@@ -22,4 +22,7 @@ export class Transaction{
     payment_id:number;
 
     status_id:number=3;
+
+    @ApiProperty({ example: new Date().toISOString() })
+    created_at:Date
 }

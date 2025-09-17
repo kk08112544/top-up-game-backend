@@ -14,7 +14,7 @@ export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
   @Post('createNewTransaction')
-  async create(@Body() postData: Transaction, @Res() res:Response):Promise<any> {
+  async createNewTransaction(@Body() postData: Transaction, @Res() res:Response):Promise<any> {
 
 
     if( !postData.user_id || !postData.game_id || !postData.package_id ||
@@ -24,7 +24,7 @@ export class TransactionController {
     }
   
     try{
-      const data = await this.transactionService.create(postData);
+      const data = await this.transactionService.createNewTransaction(postData);
       return res.status(201).json(data);
     }catch(error){
       return res.status(500).json({error:'Error Creating Transaction', details:error.message})
@@ -50,7 +50,26 @@ export class TransactionController {
       return res.status(200).json(transaction);
     }catch(error){
       return res.status(500).json({error:'Error message' + error});
+    }
+  }
 
+  @Get('TotalTopUp')
+  async TotalTopUp(@Res() res:Response):Promise<any>{
+       try{
+      const totalTopUp = await this.transactionService.getTotalTopUp();
+      return res.status(200).json(totalTopUp);
+    }catch(error){
+      return res.status(500).json({error:'Error message' + error});
+    }
+  }
+
+    @Get('TotalTopUpToday')
+  async TotalTopUpToday(@Res() res:Response):Promise<any>{
+       try{
+      const totalTopUpToday = await this.transactionService.getTotalTopUpToday();
+      return res.status(200).json(totalTopUpToday);
+    }catch(error){
+      return res.status(500).json({error:'Error message' + error});
     }
   }
 
@@ -70,7 +89,7 @@ export class TransactionController {
 
 
   
-  @Get(':user_id')
+  @Get('transactionHistory/:user_id')
   async findMyTransaction(@Param('user_id') user_id: number,@Res() res:Response):Promise<any> {
      try{
       const MyTransaction = await this.transactionService.findMyTransaction(user_id);
@@ -84,10 +103,10 @@ export class TransactionController {
     }
   }
 
-  @Put(':id')
+  @Put('updateStatusTransaction/:id')
   async update(@Param('id') id: number, @Body() status_id: number, @Res() res:Response):Promise<any> {
-    if(!status_id){
-      return res.status(400).send({error:'Content is not empty'});
+    if(![4,5].includes(Number(status_id)) || !status_id){
+      return res.status(400).json({message:'Status Id only 3,4,5'});
     }
     try{
       const updateTransaction = await this.transactionService.updateTransactionStatus(id,status_id);

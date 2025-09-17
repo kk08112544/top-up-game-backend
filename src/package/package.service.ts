@@ -37,6 +37,15 @@ export class PackageService {
          const createPackage : Package = await this.prisma.package.create({
           data:{
               ...data,
+          },
+          include:{
+           game:{
+            select:{
+              game_name:true,
+              game_profile:true,
+              description:true
+            }
+           }
           }
          })
          return createPackage;
@@ -57,7 +66,6 @@ export class PackageService {
     package_name:true,
     numpack:true,
     price:true,
-    package_profile:true,
     game:{
       select:{
         game_name:true,
@@ -82,7 +90,7 @@ export class PackageService {
     package_name:true,
     numpack:true,
     price:true,
-    package_profile:true,
+  
     game:{
       select:{
         game_name:true,
@@ -119,26 +127,18 @@ export class PackageService {
   }
 
   async updatePackage(id: number, data: Package):Promise<any> {
-     const {package_name,package_profile,price,numpack,game_id} = data;
+     const {package_name,price,numpack,game_id} = data;
 
      const updateData: Partial<Package>={}
 
      if(package_name) updateData.package_name = package_name;
-     if(package_profile) updateData.package_profile = package_profile;
      if(price) updateData.price = price;
      if(numpack) updateData.numpack = numpack;
      if(game_id) updateData.game_id = game_id;
 
 
 
-     if(package_profile){
-      try{
-        await this.removeOldImage(id);
-        console.log("Old image removed successfully");
-      }catch(error){
-        console.error("Failed to remove old image: ", error.message);
-      }
-     }
+
      try{
        
       const checkActive = await this.prisma.package.findUnique({

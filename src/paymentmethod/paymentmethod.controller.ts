@@ -40,8 +40,17 @@ export class PaymentmethodController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.paymentmethodService.findOne(id);
+  async findOne(@Param('id') id: number , @Res() res:Response):Promise<any>  {
+    try{
+      const paymentMethod = await this.paymentmethodService.findOne(id);
+      if(paymentMethod){
+        return res.status(200).json(paymentMethod);
+      }else{
+        return res.status(404).json({message:'This PaymentMethod Id ' + id + 'is not found'})
+      }
+    }catch(error){
+      return res.status(500).json({error:"Error message"+error})
+    }
   }
 
   @Put(':id')
@@ -60,12 +69,21 @@ export class PaymentmethodController {
         return res.status(404).json({error:'This Payment ID ' + id + 'is not found.'});
       }
     }catch(error){
-
+      return res.status(500).json({error:"Error message"+error})
     }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.paymentmethodService.remove(+id);
+  async remove(@Param('id') id: number,@Res() res:Response):Promise<any>  {
+       try{
+      const deleteGame = await this.paymentmethodService.deletePaymentMethod(id);
+      if(deleteGame){
+        return res.status(200).json({message:'Delete Payment Method Id ' + id + ' is Successfully'});
+      }else{
+        return res.status(404).json({message:'This Payment Method Id ' + id + 'is not found'});
+      }
+    }catch(error){
+      return res.status(500).json({error:'Error message' + error});
+    }
   }
 }

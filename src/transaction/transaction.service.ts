@@ -8,7 +8,7 @@ export class TransactionService {
   constructor(private prisma:PrismaService){}
 
 
-  async create(data: Transaction):Promise<any> {
+  async createNewTransaction(data: Transaction):Promise<any> {
     return this.prisma.transaction.create({
       data:data,
     })
@@ -39,7 +39,7 @@ export class TransactionService {
         package:{
           select:{
             package_name:true,
-            package_profile:true,
+
           }
         },
         UID:true,
@@ -52,6 +52,27 @@ export class TransactionService {
      });
   }
 
+  async getTotalTopUp():Promise<any>{
+    return this.prisma.transaction.count();
+  }
+
+  async getTotalTopUpToday():Promise<{total_topup_today:number}>{
+     const startofToday = new Date();
+     startofToday.setHours(0,0,0,0)
+     console.log("Today : " ,startofToday.toLocaleDateString("en-CA",{timeZone:"Asia/Bangkok"}));
+
+     const startofTomorrow = new Date(startofToday);
+     startofTomorrow.setDate(startofToday.getDate()+1)
+     console.log("Yesterday : " , startofTomorrow.toLocaleDateString("en-CA",{timeZone:"Asia/Bangkok"}))
+     const total_topup_today = await this.prisma.transaction.count({
+      where: {created_at:{
+        gte:startofToday,
+        lt:startofTomorrow,
+      }
+     }
+     });
+     return {total_topup_today :total_topup_today}
+  }
 
   async getManageTransaction():Promise<any>{
     return this.prisma.transaction.findMany({
@@ -81,7 +102,7 @@ export class TransactionService {
         package:{
           select:{
             package_name:true,
-            package_profile:true,
+          
           }
         },
         UID:true,
@@ -119,7 +140,7 @@ export class TransactionService {
         package:{
           select:{
             package_name:true,
-            package_profile:true,
+            
           }
         },
         UID:true,
@@ -157,7 +178,7 @@ export class TransactionService {
         package:{
           select:{
             package_name:true,
-            package_profile:true,
+          
           }
         },
         UID:true,

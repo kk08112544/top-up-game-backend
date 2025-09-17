@@ -34,24 +34,26 @@ export class PaymentmethodService {
   }
 
   async getAllPayment():Promise<any>  {
-     return this.prisma.game.findMany({
+     return this.prisma.paymentMethod.findMany({
       where:{
         active:true
       }
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} paymentmethod`;
+  async findOne(id: number):Promise<any> {
+    return this.prisma.paymentMethod.findUnique({
+      where:{id:Number(id)}
+    })
   }
 
     async removeOldImage(id:number): Promise<boolean>{
-    const game = await this.prisma.game.findUnique({where: {id:Number(id)}});
+    const paymentMethod = await this.prisma.paymentMethod.findUnique({where: {id:Number(id)}});
 
-    if(!game){
+    if(!paymentMethod){
       console.error('Record not found.');
     }
-    const img_url = game?.game_profile;
+    const img_url = paymentMethod?.payment_profile;
     if(!img_url) return false;
 
     const urlParts = img_url.split('/');
@@ -99,11 +101,19 @@ export class PaymentmethodService {
       return updated;
     }catch(error){
         console.error("Failed to update equipment:", error.message);
-        throw error;
+        return error;
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} paymentmethod`;
+  async deletePaymentMethod(id: number):Promise<any> {
+    await this.removeOldImage(id);
+    return this.prisma.paymentMethod.update({
+      where:{
+        id:Number(id)
+      },
+      data:{
+        active:false
+      }
+    })
   }
 }

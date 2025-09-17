@@ -58,7 +58,6 @@ model Package {
   package_name String
   numpack Int
   price Float
-  package_profile String
   game Game @relation(fields: [game_id],references: [id])
   game_id Int
   active Boolean @default(true)
@@ -91,6 +90,7 @@ model Transaction{
   payment_id Int
   status Status @relation(fields: [status_id],references: [id])
   status_id Int @default(3)
+  created_at   DateTime @default(now())
 }
 
 

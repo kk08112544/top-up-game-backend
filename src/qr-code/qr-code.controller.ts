@@ -19,12 +19,15 @@ export class QrCodeController {
   @Post('createNewQrCode')
   async createNewQrCode(@Body() postData: QrCode, @Res() res:Response):Promise<any> {
     
-    if(!postData.user_id ||  !postData.payment_id || !postData.price
+    if(!postData.package_id ||  !postData.payment_id 
     ){
       return res.status(400).json({error:'Content is not empty'});
     }
      try{
       const data = await this.qrCodeService.create(postData);
+      if(data === null){
+        return res.status(404).json({message:'Package Id or Payment ID is not found'})
+      }
       return res.status(201).json(data);
     }catch(error){
       return res.status(500).json({error:'Error Creating Qr Code', details:error.message})

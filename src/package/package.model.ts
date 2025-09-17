@@ -13,8 +13,6 @@ export class Package{
     @ApiProperty({ example: '' })
     price:number;
 
-    @ApiProperty({ example: '' })
-    package_profile:string;
 
     @ApiProperty({ example: '' })
     game_id:number
